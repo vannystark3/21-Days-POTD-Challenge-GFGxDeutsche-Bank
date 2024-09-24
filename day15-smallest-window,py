@@ -1,0 +1,38 @@
+from collections import Counter
+
+class Solution:
+    def smallestWindow(self, s: str, p: str) -> str:
+        if len(p) > len(s):
+            return "-1"
+        
+        p_count = Counter(p)
+        required = len(p_count) 
+        
+        left = 0
+        formed = 0
+        window_count = {}
+        
+        min_len = float('inf')
+        min_start = 0
+        
+        for right in range(len(s)):
+            char = s[right]
+            window_count[char] = window_count.get(char, 0) + 1
+            if char in p_count and window_count[char] == p_count[char]:
+                formed += 1
+            while left <= right and formed == required:
+                char = s[left]
+                if (right - left + 1) < min_len:
+                    min_len = right - left + 1
+                    min_start = left
+                
+                window_count[char] -= 1
+                if char in p_count and window_count[char] < p_count[char]:
+                    formed -= 1
+                
+                left += 1
+        
+        if min_len == float('inf'):
+            return "-1"
+        
+        return s[min_start:min_start + min_len]
